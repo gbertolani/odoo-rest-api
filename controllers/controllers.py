@@ -38,13 +38,47 @@ class OdooAPI(http.Controller):
         def dumper(obj):
             try:
                 return obj.toJSON()
-            except:
+            except Exception:
                 return obj.__dict__
         try:
             res = json.dumps(data)
         except TypeError:
             res = json.dumps(data, default=dumper)
         return res
+
+    @http.route(
+        '/reset_passwd/',
+        type='json', auth='none', methods=["POST"], csrf=False, cors='*')
+    def reset_password(self, *args, **post):
+        try:
+            login = post["login"]
+        except KeyError:
+            raise exceptions.AccessDenied(message='`login` is required.')
+
+        # Enable Reset:
+        config_obj = request.env['ir.config_parameter'].sudo()
+        param = config_obj.get_param('auth_signup.reset_password', '')
+        if str(param).lower() != 'true':
+            raise exceptions.AccessDenied(
+                message='The option to reset password is not '
+                        'enabled at the moment. '
+                        'Please contact a person in charge'
+            )
+        try:
+            user_obj = request.env.user
+            user_obj.reset_password(login)
+        except Exception as e:
+            res = error_response(e, str(e))
+            return http.Response(
+                self.json_dump(res),
+                status=200,
+                mimetype='application/json'
+            )
+        return json.dumps({
+            'jsonrpc': '2.0',
+            'id': False,
+            'result': 'ok',
+        })
 
     @http.route(
         '/auth/',
