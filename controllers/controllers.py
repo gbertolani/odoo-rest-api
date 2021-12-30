@@ -47,6 +47,38 @@ class OdooAPI(http.Controller):
         return res
 
     @http.route(
+        '/change_passwd/',
+        type='json', auth='user', methods=["POST"], csrf=False, cors='*')
+    def change_passwd(self, *args, **post):
+        try:
+            current_passwd = post["current_passwd"]
+        except KeyError:
+            raise exceptions.AccessDenied(
+                message='`current_passwd` is required.',
+            )
+        try:
+            new_passwd = post["new_passwd"]
+        except KeyError:
+            raise exceptions.AccessDenied(
+                message='`new_passwd` is required.',
+            )
+        # Check credentials
+        user = request.env.user
+        if not user:
+            raise exceptions.AccessDenied(
+                message='user not logged in.',
+            )
+        try:
+            user.change_password(current_passwd, new_passwd)
+        except Exception as e:
+            raise exceptions.AccessDenied(message=str(e))
+        return json.dumps({
+            'jsonrpc': '2.0',
+            'id': False,
+            'result': 'ok',
+        })
+
+    @http.route(
         '/reset_passwd/',
         type='json', auth='none', methods=["POST"], csrf=False, cors='*')
     def reset_password(self, *args, **post):
@@ -100,7 +132,7 @@ class OdooAPI(http.Controller):
             raise exceptions.AccessDenied(message='`db` is required.')
 
         url_root = request.httprequest.url_root.replace('http', 'https')
-        #url_root = request.httprequest.url_root
+        # url_root = request.httprequest.url_root
         AUTH_URL = f"{url_root}web/session/authenticate/"
 
         headers = {'Content-type': 'application/json'}
@@ -361,7 +393,7 @@ class OdooAPI(http.Controller):
 
         try:
             return rec.write(data)
-        except Exception as e:
+        except Exception:
             # TODO: Return error message(e.msg) on a response
             return False
 
@@ -426,7 +458,7 @@ class OdooAPI(http.Controller):
         if recs.exists():
             try:
                 return recs.write(data)
-            except Exception as e:
+            except Exception:
                 # TODO: Return error message(e.msg) on a response
                 return False
         else:
