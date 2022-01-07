@@ -62,8 +62,9 @@ class OdooAPI(http.Controller):
             raise exceptions.AccessDenied(
                 message='`new_passwd` is required.',
             )
+        # Note: request.env.user has other enviroment with uid=1
         # Check credentials
-        user = request.env.user
+        user = request.env['res.users'].browse(request.env.uid)
         if not user:
             raise exceptions.AccessDenied(
                 message='user not logged in.',
@@ -72,11 +73,7 @@ class OdooAPI(http.Controller):
             user.change_password(current_passwd, new_passwd)
         except Exception as e:
             raise exceptions.AccessDenied(message=str(e))
-        return json.dumps({
-            'jsonrpc': '2.0',
-            'id': False,
-            'result': 'ok',
-        })
+        return 'OK'
 
     @http.route(
         '/reset_passwd/',
@@ -106,11 +103,7 @@ class OdooAPI(http.Controller):
                 status=200,
                 mimetype='application/json'
             )
-        return json.dumps({
-            'jsonrpc': '2.0',
-            'id': False,
-            'result': 'ok',
-        })
+        return 'OK'
 
     @http.route(
         '/auth/',
