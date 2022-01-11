@@ -136,3 +136,5 @@ XDG_CACHE_HOME
 
 # End of https://www.gitignore.io/api/python,visualstudiocode
 
+*.swp
+*.swo

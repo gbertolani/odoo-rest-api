@@ -51,10 +51,18 @@ class Serializer(object):
         try:
             if field_type in ['one2many', 'many2many']:
                 return {
-                    field_name: [record.id for record in rec[field_name]]
+                    field_name: [
+                        (record.id, record.display_name)
+                        for record in rec[field_name]
+                    ]
                 }
             elif field_type in ['many2one']:
-                return {field_name: rec[field_name].id}
+                return {
+                    field_name: (
+                        rec[field_name].id,
+                        rec[field_name].display_name,
+                    )
+                }
             elif field_type == 'datetime' and rec[field_name]:
                 return {
                     field_name: rec[field_name].strftime("%Y-%m-%d-%H-%M")
