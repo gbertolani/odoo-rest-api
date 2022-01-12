@@ -81,6 +81,8 @@ class Serializer(object):
                 return {field_name: rec[field_name]}
         except exceptions.AccessError:
             return {}
+        except exceptions.MissingError:
+            return {}
 
     @classmethod
     def build_nested_field(cls, rec, field_name, nested_parsed_query):

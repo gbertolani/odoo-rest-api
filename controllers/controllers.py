@@ -25,8 +25,9 @@ def error_response(error, msg):
                 "name": str(error),
                 "debug": "",
                 "message": msg,
-                "arguments": list(error.args),
-                "exception_type": type(error).__name__
+                "arguments": list(error.args)
+                if hasattr(error, 'args') else '',
+                "exception_type": type(error).__name__,
             }
         }
     }
@@ -285,6 +286,14 @@ class OdooAPI(http.Controller):
 
         # TODO: Handle the error raised by `ensure_one`
         record = records.browse(rec_id).ensure_one()
+        if not record.exists():
+            msg = "The record `%s` does not exist." % rec_id
+            res = error_response("Record does not exists", msg)
+            return http.Response(
+                self.json_dump(res),
+                status=200,
+                mimetype='application/json'
+            )
 
         try:
             serializer = Serializer(record, query)
