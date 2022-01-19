@@ -3,6 +3,7 @@ import json
 import math
 import logging
 import requests
+import werkzeug
 
 from odoo import http, _, exceptions
 from odoo.http import request
@@ -47,6 +48,97 @@ class OdooAPI(http.Controller):
             res = json.dumps(data, default=dumper)
         return res
 
+    def get_auth_signup_config(self):
+        """
+        retrieve the module config (which features are enabled)
+        for the login
+        """
+        get_param = request.env['ir.config_parameter'].sudo().get_param
+        user_obj = request.env['res.users']
+        return {
+            'signup_enabled': user_obj._get_signup_invitation_scope() == 'b2c',
+            'reset_password_enabled': get_param(
+                'auth_signup.reset_password'
+            ) == 'True',
+        }
+
+    def get_auth_signup_qcontext(self):
+        """
+        Shared helper returning the rendering
+        context for signup and reset password
+        """
+        qcontext = request.params.copy()
+        qcontext.update(self.get_auth_signup_config())
+        if qcontext.get('token'):
+            try:
+                # retrieve the user info (name, login or email)
+                # corresponding to a signup token
+                partner_obj = request.env['res.partner'].sudo()
+                token_infos = partner_obj.signup_retrieve_info(
+                    qcontext.get('token')
+                )
+                for k, v in token_infos.items():
+                    qcontext.setdefault(k, v)
+            except Exception:
+                qcontext['error'] = _("Invalid signup token")
+                qcontext['invalid_token'] = True
+        return qcontext
+
+    def _signup_with_values(self, token, values):
+        user_obj = request.env['res.users']
+        db, login, password = user_obj.sudo().signup(values, token)
+        request.env.cr.commit()
+        # as authenticate will use its own cursor
+        # we need to commit the current transaction
+        uid = request.session.authenticate(db, login, password)
+        if not uid:
+            raise exceptions.UserError(_('Authentication Failed.'))
+
+    def do_signup(self, qcontext):
+        """ Shared helper that creates a res.partner out of a token """
+        values = {
+            key: qcontext.get(key)
+            for key in ('login', 'name', 'password')
+        }
+        if not values:
+            raise exceptions.UserError(
+                _("The form was not properly filled in."),
+            )
+        if values.get('password') != qcontext.get('confirm_password'):
+            raise exceptions.UserError(
+                _("Passwords do not match; please retype them."),
+            )
+        supported_langs = [
+            lang['code']
+            for lang in request.env['res.lang'].sudo().search_read(
+                [], ['code']
+            )
+        ]
+        if request.lang in supported_langs:
+            values['lang'] = request.lang
+        self._signup_with_values(qcontext.get('token'), values)
+        request.env.cr.commit()
+
+    @http.route(
+        '/api_signup/',
+        type='json', auth='none', methods=["POST"], csrf=False, cors='*')
+    def api_signup(self, *args, **post):
+        qcontext = self.get_auth_signup_qcontext()
+        if not qcontext.get('token') and \
+                not qcontext.get('reset_password_enabled'):
+            raise werkzeug.exceptions.NotFound()
+        if 'error' not in qcontext:
+            try:
+                self.do_signup(qcontext)
+            except exceptions.UserError as e:
+                qcontext['error'] = e.name or e.value
+
+        if 'error' in qcontext:
+            raise exceptions.AccessDenied(
+                message=qcontext['error'],
+            )
+        return 'OK'
+
     @http.route(
         '/change_passwd/',
         type='json', auth='user', methods=["POST"], csrf=False, cors='*')
@@ -74,13 +166,6 @@ class OdooAPI(http.Controller):
             user.change_password(current_passwd, new_passwd)
         except Exception as e:
             raise exceptions.AccessDenied(message=str(e))
-        return 'OK'
-
-    @http.route(
-        '/api_signup/',
-        type='json', auth='none', methods=["POST", "GET"], csrf=False, cors='*')
-    def api_signup(self, *args, **post):
-        _logger.info("SINGUP: %s" % str(post))
         return 'OK'
 
     @http.route(
