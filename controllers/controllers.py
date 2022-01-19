@@ -77,6 +77,13 @@ class OdooAPI(http.Controller):
         return 'OK'
 
     @http.route(
+        '/api_signup/',
+        type='json', auth='none', methods=["POST", "GET"], csrf=False, cors='*')
+    def api_signup(self, *args, **post):
+        _logger.info("SINGUP: %s" % str(post))
+        return 'OK'
+
+    @http.route(
         '/reset_passwd/',
         type='json', auth='none', methods=["POST"], csrf=False, cors='*')
     def reset_password(self, *args, **post):
