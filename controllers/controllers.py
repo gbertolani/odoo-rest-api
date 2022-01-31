@@ -217,7 +217,10 @@ class OdooAPI(http.Controller):
         except KeyError:
             raise exceptions.AccessDenied(message='`db` is required.')
 
-        url_root = request.httprequest.url_root.replace('http', 'https')
+        if 'https' not in request.httprequest.url_root:
+            url_root = request.httprequest.url_root.replace('http', 'https')
+        else:
+            url_root = request.httprequest.url_root
         # url_root = request.httprequest.url_root
         AUTH_URL = f"{url_root}web/session/authenticate/"
 
