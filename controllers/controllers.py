@@ -147,20 +147,20 @@ class OdooAPI(http.Controller):
             current_passwd = post["current_passwd"]
         except KeyError:
             raise exceptions.AccessDenied(
-                message='`current_passwd` is required.',
+                message=_('`current_passwd` is required.'),
             )
         try:
             new_passwd = post["new_passwd"]
         except KeyError:
             raise exceptions.AccessDenied(
-                message='`new_passwd` is required.',
+                message=_('`new_passwd` is required.'),
             )
         # Note: request.env.user has other enviroment with uid=1
         # Check credentials
         user = request.env['res.users'].browse(request.env.uid)
         if not user:
             raise exceptions.AccessDenied(
-                message='user not logged in.',
+                message=_('user not logged in.'),
             )
         try:
             user.change_password(current_passwd, new_passwd)
@@ -177,14 +177,23 @@ class OdooAPI(http.Controller):
         except KeyError:
             raise exceptions.AccessDenied(message='`login` is required.')
 
+        user_obj = request.env['res.users'].sudo()
+        user = user_obj.search([
+            ('login', '=', login),
+        ])
+        if not user:
+            raise exceptions.AccessDenied(
+                message=_('User with mail %s not exists.') % login,
+            )
+
         # Enable Reset:
         config_obj = request.env['ir.config_parameter'].sudo()
         param = config_obj.get_param('auth_signup.reset_password', '')
         if str(param).lower() != 'true':
             raise exceptions.AccessDenied(
-                message='The option to reset password is not '
+                message=_('The option to reset password is not '
                         'enabled at the moment. '
-                        'Please contact a person in charge'
+                        'Please contact a person in charge')
             )
         try:
             user_obj = request.env.user
@@ -205,17 +214,17 @@ class OdooAPI(http.Controller):
         try:
             login = post["login"]
         except KeyError:
-            raise exceptions.AccessDenied(message='`login` is required.')
+            raise exceptions.AccessDenied(message=_('`login` is required.'))
 
         try:
             password = post["password"]
         except KeyError:
-            raise exceptions.AccessDenied(message='`password` is required.')
+            raise exceptions.AccessDenied(message=_('`password` is required.'))
 
         try:
             db = post["db"]
         except KeyError:
-            raise exceptions.AccessDenied(message='`db` is required.')
+            raise exceptions.AccessDenied(message=_('`db` is required.'))
 
         if 'https' not in request.httprequest.url_root:
             url_root = request.httprequest.url_root.replace('http', 'https')
@@ -284,7 +293,7 @@ class OdooAPI(http.Controller):
         try:
             records = request.env[model].search([])
         except KeyError as e:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             res = error_response(e, msg)
             return http.Response(
                 self.json_dump(res),
@@ -366,7 +375,7 @@ class OdooAPI(http.Controller):
         try:
             records = request.env[model].search([])
         except KeyError as e:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             res = error_response(e, msg)
             return http.Response(
                 self.json_dump(res),
@@ -382,8 +391,8 @@ class OdooAPI(http.Controller):
         # TODO: Handle the error raised by `ensure_one`
         record = records.browse(rec_id).ensure_one()
         if not record.exists():
-            msg = "The record `%s` does not exist." % rec_id
-            res = error_response("Record does not exists", msg)
+            msg = _("The record `%s` does not exist.") % rec_id
+            res = error_response(_("Record does not exists"), msg)
             return http.Response(
                 self.json_dump(res),
                 status=200,
@@ -414,13 +423,13 @@ class OdooAPI(http.Controller):
         try:
             data = post['data']
         except KeyError:
-            msg = "`data` parameter is not found on POST request body"
+            msg = _("`data` parameter is not found on POST request body")
             raise exceptions.ValidationError(msg)
 
         try:
             model_to_post = request.env[model]
         except KeyError:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             raise exceptions.ValidationError(msg)
 
         # TODO: Handle data validation
@@ -440,13 +449,13 @@ class OdooAPI(http.Controller):
         try:
             data = post['data']
         except KeyError:
-            msg = "`data` parameter is not found on PUT request body"
+            msg = _("`data` parameter is not found on PUT request body")
             raise exceptions.ValidationError(msg)
 
         try:
             model_to_put = request.env[model]
         except KeyError:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             raise exceptions.ValidationError(msg)
 
         if "context" in post:
@@ -502,13 +511,13 @@ class OdooAPI(http.Controller):
         try:
             data = post['data']
         except KeyError:
-            msg = "`data` parameter is not found on PUT request body"
+            msg = _("`data` parameter is not found on PUT request body")
             raise exceptions.ValidationError(msg)
 
         try:
             model_to_put = request.env[model]
         except KeyError:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             raise exceptions.ValidationError(msg)
 
         # TODO: Handle errors on filter
@@ -609,7 +618,7 @@ class OdooAPI(http.Controller):
         try:
             model_to_del_rec = request.env[model]
         except KeyError as e:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             res = error_response(e, msg)
             return http.Response(
                 self.json_dump(res),
@@ -645,7 +654,7 @@ class OdooAPI(http.Controller):
         try:
             request.env[model]
         except KeyError as e:
-            msg = "The model `%s` does not exist." % model
+            msg = _("The model `%s` does not exist.") % model
             res = error_response(e, msg)
             return http.Response(
                 self.json_dump(res),

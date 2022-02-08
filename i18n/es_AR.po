@@ -1,0 +1,131 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* odoo-rest-api
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 12.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-08 20:41+0000\n"
+"PO-Revision-Date: 2022-02-08 17:45-0300\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.3\n"
+"Last-Translator: \n"
+"Language: es_AR\n"
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:95
+#, python-format
+msgid "Authentication Failed."
+msgstr "Autenticación fallida."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:83
+#, python-format
+msgid "Invalid signup token"
+msgstr "Token de registro no válido"
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:109
+#, python-format
+msgid "Passwords do not match; please retype them."
+msgstr "Las contraseñas no coinciden; por favor vuelva a escribirlos."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:395
+#, python-format
+msgid "Record does not exists"
+msgstr "Registro no existe"
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:105
+#, python-format
+msgid "The form was not properly filled in."
+msgstr "El formulario no se llenó correctamente."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:296
+#: code:addons/odoo-rest-api/controllers/controllers.py:378
+#: code:addons/odoo-rest-api/controllers/controllers.py:432
+#: code:addons/odoo-rest-api/controllers/controllers.py:458
+#: code:addons/odoo-rest-api/controllers/controllers.py:520
+#: code:addons/odoo-rest-api/controllers/controllers.py:621
+#: code:addons/odoo-rest-api/controllers/controllers.py:657
+#, python-format
+msgid "The model `%s` does not exist."
+msgstr "El modelo `%s` no existe."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:194
+#, python-format
+msgid ""
+"The option to reset password is not enabled at the moment. Please contact a "
+"person in charge"
+msgstr ""
+"La opción de restablecer contraseña no está habilitada en este momento. Por "
+"favor, póngase en contacto con una persona a cargo"
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:394
+#, python-format
+msgid "The record `%s` does not exist."
+msgstr "El registro `%s` no existe."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:186
+#, python-format
+msgid "User with mail %s not exists."
+msgstr "No existe un usuario con la dirección de mail %s."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:150
+#, python-format
+msgid "`current_passwd` is required."
+msgstr "Se requiere `current_passwd`."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:426
+#, python-format
+msgid "`data` parameter is not found on POST request body"
+msgstr "El parámetro `data` no se encuentra en el cuerpo de la solicitud POST"
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:452
+#: code:addons/odoo-rest-api/controllers/controllers.py:514
+#, python-format
+msgid "`data` parameter is not found on PUT request body"
+msgstr "El parámetro `data` no se encuentra en el cuerpo de la solicitud PUT"
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:227
+#, python-format
+msgid "`db` is required."
+msgstr "Se requiere `db`."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:217
+#, python-format
+msgid "`login` is required."
+msgstr "Se requiere `login`."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:156
+#, python-format
+msgid "`new_passwd` is required."
+msgstr "Se requiere `new_passwd`."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:222
+#, python-format
+msgid "`password` is required."
+msgstr "Se requiere `password`."
+
+#. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:163
+#, python-format
+msgid "user not logged in."
+msgstr "Usuario no registrado."
