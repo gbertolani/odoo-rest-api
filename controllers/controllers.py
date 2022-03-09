@@ -120,6 +120,32 @@ class OdooAPI(http.Controller):
         request.env.cr.commit()
 
     @http.route(
+        '/verify_token/',
+        type='json', auth='none', methods=["POST"], csrf=False, cors='*')
+    def api_verify_token(self, *args, **post):
+        try:
+            token = post["token"]
+        except KeyError:
+            raise exceptions.AccessDenied(
+                message=_('`token` is required.'),
+            )
+        try:
+            post["db"]
+        except KeyError:
+            raise exceptions.AccessDenied(
+                message=_('`db` is required.'),
+            )
+        partner = request.env['res.partner'].sudo().search([
+            ('signup_token', '=', token)
+        ], limit=1)
+        if not partner:
+            raise exceptions.AccessDenied(_("Token is not valid"))
+        if not partner.signup_valid:
+            raise exceptions.AccessDenied(_("Signup token '%s' is no longer valid") % token)
+            return False
+        return 'OK'
+
+    @http.route(
         '/api_signup/',
         type='json', auth='none', methods=["POST"], csrf=False, cors='*')
     def api_signup(self, *args, **post):
