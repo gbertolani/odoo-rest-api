@@ -42,6 +42,12 @@ msgid "Record does not exists"
 msgstr "Registro no existe"
 
 #. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:144
+#, python-format
+msgid "Signup token '%s' is no longer valid"
+msgstr "El token de registro '%s' ya no es válido"
+
+#. module: odoo-rest-api
 #: code:addons/odoo-rest-api/controllers/controllers.py:105
 #, python-format
 msgid "The form was not properly filled in."
@@ -76,6 +82,12 @@ msgid "The record `%s` does not exist."
 msgstr "El registro `%s` no existe."
 
 #. module: odoo-rest-api
+#: code:addons/odoo-rest-api/controllers/controllers.py:142
+#, python-format
+msgid "Token is not valid"
+msgstr "El token no es válido"
+
+#. module: odoo-rest-api
 #: code:addons/odoo-rest-api/controllers/controllers.py:186
 #, python-format
 msgid "User with mail %s not exists."
@@ -101,7 +113,8 @@ msgid "`data` parameter is not found on PUT request body"
 msgstr "El parámetro `data` no se encuentra en el cuerpo de la solicitud PUT"
 
 #. module: odoo-rest-api
-#: code:addons/odoo-rest-api/controllers/controllers.py:227
+#: code:addons/odoo-rest-api/controllers/controllers.py:136
+#: code:addons/odoo-rest-api/controllers/controllers.py:254
 #, python-format
 msgid "`db` is required."
 msgstr "Se requiere `db`."
